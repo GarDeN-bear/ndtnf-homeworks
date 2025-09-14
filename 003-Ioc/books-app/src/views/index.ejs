@@ -1,0 +1,35 @@
+<%- include('port/layout-start', {title: title}) %>
+<div>
+  <a class="btn btn-sm btn-primary" href="/api/users/">Home</a> 
+  <h1><%= title %></h1>
+  <a class="btn btn-sm btn-primary" href="/api/books?action=create">
+    Add book
+  </a>
+  <% if(books.length) {%>
+  <table>
+    <% books.map((el, idx) => { %>
+    <tr>
+      <th scope="row"><%= idx +1 %>. </th>
+      <td><%= el.title %></td>
+      <td class="text-left">
+        <a class="btn btn-sm btn-success" href="/api/books/<%= el.id %>">
+          <i class="fa fa-eye" aria-hidden="true"></i>
+        </a>
+        <a class="btn btn-sm btn-primary" href="/api/books/<%= el.id %>?action=update">
+          <i class="fa fa-pencil" aria-hidden="true"></i>
+        </a>
+        <form method="POST" action="/api/books/<%= el.id %>?_method=DELETE" class="d-inline"">
+          <button class="btn btn-sm btn-danger">
+            <i class="fa fa-trash" aria-hidden="true"></i>
+          </button>
+        </form>
+      </td>
+    </tr>
+    <% }) %>
+  </table>
+  <% } else { %>
+  <div>There are no books</div>
+  <% } %>
+  
+</div>
+<%- include('port/layout-end') %>
