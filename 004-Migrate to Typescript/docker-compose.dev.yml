@@ -1,0 +1,59 @@
+# Use root/example as user/password credentials
+
+services:
+  counter-service:
+    image: garden001/counter-service:v2.0.0
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+  books-app-1:
+    image: node:20.10-alpine
+    working_dir: /books-app
+    volumes:
+      - ./books-app:/books-app
+    ports:
+      - "80:3000"
+    environment:
+      - PORT=3000
+      - COUNTER_SERVICE_URL=http://counter-service:3001
+      - ME_CONFIG_MONGODB_URL=mongodb://root:example@mongo:27017/
+    command: npm run dev
+    depends_on:
+      - counter-service
+  books-app-2:
+    image: node:20.10-alpine
+    working_dir: /books-app
+    volumes:
+      - ./books-app:/books-app
+    ports:
+      - "81:3000"
+    environment:
+      - PORT=3000
+      - COUNTER_SERVICE_URL=http://counter-service:3001
+      - ME_CONFIG_MONGODB_URL=mongodb://root:example@mongo:27017/
+    command: npm run dev
+    depends_on:
+      - counter-service
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+      ME_CONFIG_BASICAUTH: false
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped

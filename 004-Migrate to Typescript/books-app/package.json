@@ -1,0 +1,38 @@
+{
+  "name": "books-app",
+  "version": "1.0.0",
+  "description": "**Правила выполнения домашней работы:**  * выполняйте домашнее задание в отдельной ветке проекта на GitHub, * в поле для сдачи работы прикрепите ссылку на ваш проект в Git, * присылать на проверку можно каждую задачу по отдельности или все задачи вместе,  * во время проверки по частям ваша домашняя работа будет обозначаться статусом «На доработке», * любые вопросы по решению задач задавайте в канале вашей группы.",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.ts",
+    "dev": "nodemon -L"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@socket.io/redis-adapter": "^8.3.0",
+    "axios": "^1.11.0",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "inversify": "^7.9.1",
+    "method-override": "^3.0.0",
+    "mongoose": "^8.17.1",
+    "multer": "^2.0.2",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
+    "redis": "^5.8.1",
+    "socket.io": "^4.8.1",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^24.5.2",
+    "@types/passport": "^1.0.17",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  }
+}

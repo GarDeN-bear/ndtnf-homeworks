@@ -1,0 +1,31 @@
+<%- include('port/layout-start', {title: book.title}) %>
+<h1><%= book.title %></h1>
+<div class="row">
+    <div class="col-sm-8">
+        <div class="card">
+            <div class="card-body">
+                <h5>Authors</h5>
+                <p class="card-text"><%= book.authors %></p>
+                <h5>Description</h5>
+                <p class="card-text"><%= book.description %></p>
+                <h5>Counter</h5>
+                <p class="card-text"><%= counter %></p>
+
+                <div class="text-right">
+                    <a class="btn btn-sm btn-primary" href="/api/books/<%= book.id %>?action=update">
+                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                    </a>
+                    <form method="POST" action="api/books/<%= book.id %>?_method=DELETE" class="d-inline">
+                        <button class="btn btn-sm btn-danger">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('chat') %>
+<%- include('port/layout-end') %>
