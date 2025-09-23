@@ -5,13 +5,17 @@ import UserModel from "../db/users";
 
 @injectable()
 export default class UsersRepository {
-  async createUser(User: User): Promise<void> {
-    const newUser = new UserModel({ ...User });
+  async createUser(user: User): Promise<void> {
+    const newUser = new UserModel({ ...user });
     await newUser.save();
   }
 
-  async getUser(id: number): Promise<User | null> {
+  async getUser(id: string): Promise<User | null> {
     return await UserModel.findById(id).select("-__v").exec();
+  }
+  
+  async getUserByUsername(username: string): Promise<User | null> {
+    return await UserModel.findOne({ username }).select("-__v").exec();
   }
 
   async getUsers(): Promise<User[]> {
@@ -25,4 +29,5 @@ export default class UsersRepository {
   async deleteUser(id: number): Promise<void> {
     await UserModel.deleteOne({ _id: id });
   }
+
 }

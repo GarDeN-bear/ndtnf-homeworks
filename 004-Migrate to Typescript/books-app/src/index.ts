@@ -1,76 +1,45 @@
 import * as express from "express";
-import mongoose from "mongoose";
 import * as path from "path";
-import { createServer } from "http";
 import * as methodOverride from "method-override";
 import * as session from "express-session";
 import * as passport from "passport";
+import { createServer } from "http";
 import {Server} from 'socket.io';
-import { createAdapter } from "@socket.io/redis-adapter";
-import { createClient } from "redis";
-
 import errorMiddleware from "./middlewares/errors";
-import users from "./routes/users";
-import books from "./routes/books";
+
+
+import config from "./config/index";
+import router from "./routers/index";
+import connectToMongoDb from "./db/connection";
+import initChatHandlers from "./server/communication";
 
 const app = express();
+
+app.use(session(config.auth.session));
+app.use(passport.initialize());
+app.use(passport.session());
+
 const server = createServer(app);
 const io = new Server(server);
 
-const pubClient = createClient({ url: "redis://redis:6379" });
-const subClient = pubClient.duplicate();
-
-Promise.all([pubClient.connect(), subClient.connect()]).then(() => {
-  io.adapter(createAdapter(pubClient, subClient));
-  console.log("Redis адаптер подключен");
-});
 
 app.use(methodOverride("_method"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(router);
 
-app.use(session({ secret: "SECRET" }));
-app.use(passport.initialize());
-app.use(passport.session());
 
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, 'public')));
 app.set("view engine", "ejs");
 
-app.use("/api/users", users);
-app.use("/api/books", books);
 app.use(errorMiddleware);
 
-io.on('connection', (socket) => {
-    const {id} = socket;
-    console.log(`Socket connected: ${id}`);
+initChatHandlers(io);
 
-    socket.on('message-to-me', (msg) => {
-        msg.type = 'me';
-        socket.emit('message-to-me', msg);
-    });
-
-    socket.on('message-to-all', (msg) => {
-        msg.type = 'all';
-        io.emit('message-to-all', msg);
-    });
-
-    const {roomName} = socket.handshake.query;
-    console.log(`Socket roomName: ${roomName}`);
-    socket.join(roomName);
-    socket.on('message-to-room', (msg) => {
-        msg.type = `room: ${roomName}`;
-        io.to(roomName).emit('message-to-room', msg);
-    });
-
-    socket.on('disconnect', () => {
-        console.log(`Socket disconnected: ${id}`);
-    });
-});
-
-async function startMongoDb(port, url) {
+async function start(port, mongoUrl) {
   try {
-    await mongoose.connect(url);
+    await connectToMongoDb(mongoUrl);
     server.listen(port, () => {
       console.log(`Server is running on port ${port}`);
     });
@@ -79,5 +48,4 @@ async function startMongoDb(port, url) {
   }
 }
 
-const port = process.env.PORT || 3000;
-startMongoDb(port, process.env.ME_CONFIG_MONGODB_URL);
+start(config.server.port, config.mongo.url);

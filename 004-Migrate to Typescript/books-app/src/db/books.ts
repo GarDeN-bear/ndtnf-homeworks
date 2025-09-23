@@ -1,5 +1,7 @@
 import { Schema, model } from "mongoose";
 
+import Book from "../interfaces/book.interface";
+
 const bookSchema = new Schema({
   title: {
     type: String,
@@ -28,4 +30,4 @@ const bookSchema = new Schema({
   },
 });
 
-export default model("Book", bookSchema);
+export default model<Book>("Book", bookSchema);

@@ -1,46 +1,14 @@
 import * as express from "express";
 import * as passport from "passport";
-import LocalStrategy from "passport-local";
+import * as LocalStrategy from "passport-local";
 
+import myContainer from "../containers/container";
 import UsersRepository from "../repositories/users.repository";
+import User from "../interfaces/user.interface";
+
+const repo = myContainer.get(UsersRepository);
 
 const router = express.Router();
-
-const verify = async (username, password, done) => {
-  try {
-    const user = await User.findOne({username});
-    if (!user) {
-      return done(null, false);
-    }
-    if (!user.verifyPassword(password)) {
-      return done(null, false);
-    }
-    return done(null, user);
-  } catch (error) {
-      return done(error);
-  }
-};
-
-const options = {
-  usernameField: "username",
-  passwordField: "password",
-};
-
-passport.use("local", new LocalStrategy(options, verify));
-
-passport.serializeUser((user, cb) => {
-  cb(null, user.id);
-});
-
-passport.deserializeUser(async (id, cb) => {
-  try {
-    const user = await User.findById(id).select("-__v");
-    cb(null, user);
-  } catch (error) {
-      return cb(err);
-  }
-  }
-);
 
 router.get("/", async (req, res) => {
   res.status(200).render("users/home", { title: "Home", user: req.user });
@@ -91,19 +59,19 @@ router.post("/signup", async (req, res) => {
   const { username, password } =
     req.body;
 
-    const existingUser = await User.findOne({ username });
+    const existingUser = await repo.getUserByUsername(username);
     
     if (existingUser) {
       return res.redirect("/api/users/signup");
     }
 
-  const newUser = new User({
+  const newUser = {
     username,
-    password,
-  });
+    password
+  } as User;
 
   try {
-    await newUser.save();
+    await repo.createUser(newUser);
     res.status(200).redirect("/api/users/");
   } catch (error) {
     res.status(404).redirect("/api/errors/404/");

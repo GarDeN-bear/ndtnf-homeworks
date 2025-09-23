@@ -7,31 +7,18 @@ services:
       - "3001:3001"
     environment:
       - PORT=3001
-  books-app-1:
+  books-app:
     image: node:20.10-alpine
     working_dir: /books-app
     volumes:
       - ./books-app:/books-app
     ports:
-      - "80:3000"
+      - "3000:3000"
     environment:
       - PORT=3000
       - COUNTER_SERVICE_URL=http://counter-service:3001
       - ME_CONFIG_MONGODB_URL=mongodb://root:example@mongo:27017/
-    command: npm run dev
-    depends_on:
-      - counter-service
-  books-app-2:
-    image: node:20.10-alpine
-    working_dir: /books-app
-    volumes:
-      - ./books-app:/books-app
-    ports:
-      - "81:3000"
-    environment:
-      - PORT=3000
-      - COUNTER_SERVICE_URL=http://counter-service:3001
-      - ME_CONFIG_MONGODB_URL=mongodb://root:example@mongo:27017/
+      - SESSION_SECRET=7f4a8d3e1c9b2a5f6e8c0d7b3a9f1e5c2d8b4a7f0e9c6d5b8a3f1e7c4a9d2b6f8e
     command: npm run dev
     depends_on:
       - counter-service
@@ -52,8 +39,3 @@ services:
       ME_CONFIG_MONGODB_ADMINPASSWORD: example
       ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
       ME_CONFIG_BASICAUTH: false
-  redis:
-    image: redis
-    ports:
-      - "6379:6379"
-    restart: unless-stopped

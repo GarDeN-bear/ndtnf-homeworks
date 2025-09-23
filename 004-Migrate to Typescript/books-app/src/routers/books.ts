@@ -4,6 +4,7 @@ import axios from "axios";
 import myContainer from "../containers/container";
 import uploader from "../middlewares/upload";
 import BooksRepository from "../repositories/books.repository";
+import Book from "../interfaces/book.interface";
 
 const counterServiceUrl = process.env.COUNTER_SERVICE_URL || "http://localhost";
 const router = express.Router();
@@ -26,7 +27,7 @@ router.get(
           res.status(200).render("create", { title: "Adding book", book: {} });
           break;
         default:
-          const books = repo.getBooks();
+          const books = await repo.getBooks();
           res
             .status(200)
             .render("index", { title: "Books", books: books, user: {} });
@@ -49,7 +50,7 @@ router.post("/", uploader.single("file-key"), async (req, res) => {
     favorite,
     fileCover,
     fileName,
-  };
+  } as Book;
 
   try {
     await repo.createBook(newBook);
@@ -77,7 +78,7 @@ function updateById(res, id, book) {
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const book = await repo.getBook(Number(id));
+    const book = await repo.getBook(id);
     const { action } = req.query;
     switch (action) {
       case "update":
@@ -105,9 +106,9 @@ router.put("/:id", uploader.single("file-key"), async (req, res) => {
       favorite,
       fileCover,
       fileName,
-    };
+    } as Book;
 
-    await repo.updateBook(Number(id), updatedBook);
+    await repo.updateBook(id, updatedBook);
 
     res.status(200).redirect("/api/books/");
   } catch (error) {
@@ -118,7 +119,7 @@ router.put("/:id", uploader.single("file-key"), async (req, res) => {
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    await repo.deleteBook(Number(id));
+    await repo.deleteBook(id);
     res.status(200).redirect("/api/books/");
   } catch (error) {
     res.status(404).redirect("/api/errors/404/");

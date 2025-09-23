@@ -10,7 +10,7 @@ export default class BooksRepository {
     await newBook.save();
   }
 
-  async getBook(id: number): Promise<Book | null> {
+  async getBook(id: string): Promise<Book | null> {
     return await BookModel.findById(id).select("-__v").exec();
   }
 
@@ -18,11 +18,11 @@ export default class BooksRepository {
     return await BookModel.find().select("-__v").exec();
   }
 
-  async updateBook(id: number, updatedBook: Book): Promise<void> {
+  async updateBook(id: string, updatedBook: Book): Promise<void> {
     await BookModel.findByIdAndUpdate(id, { ...updatedBook });
   }
 
-  async deleteBook(id: number): Promise<void> {
+  async deleteBook(id: string): Promise<void> {
     await BookModel.deleteOne({ _id: id });
   }
 }
