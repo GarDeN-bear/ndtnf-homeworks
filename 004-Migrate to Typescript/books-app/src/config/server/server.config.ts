@@ -1,4 +1,5 @@
 export default {
   port: process.env.PORT || 3000,
   nodeEnv: process.env.NODE_ENV || "development",
+  counterServiceUrl: process.env.COUNTER_SERVICE_URL
 };

@@ -1,6 +1,5 @@
 import * as express from "express";
 import * as passport from "passport";
-import * as LocalStrategy from "passport-local";
 
 import myContainer from "../containers/container";
 import UsersRepository from "../repositories/users.repository";

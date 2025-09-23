@@ -5,8 +5,8 @@ import myContainer from "../containers/container";
 import uploader from "../middlewares/upload";
 import BooksRepository from "../repositories/books.repository";
 import Book from "../interfaces/book.interface";
+import config from "../config/index"
 
-const counterServiceUrl = process.env.COUNTER_SERVICE_URL || "http://localhost";
 const router = express.Router();
 
 const repo = myContainer.get(BooksRepository);
@@ -61,9 +61,9 @@ router.post("/", uploader.single("file-key"), async (req, res) => {
 });
 
 async function viewById(res, id, book) {
-  await axios.post(`${counterServiceUrl}/counter/${id}/incr`);
+  await axios.post(`${config.server.counterServiceUrl}/counter/${id}/incr`);
 
-  const counterResponse = await axios.get(`${counterServiceUrl}/counter/${id}`);
+  const counterResponse = await axios.get(`${config.server.counterServiceUrl}/counter/${id}`);
 
   res.status(200).render("view", {
     book: book,
