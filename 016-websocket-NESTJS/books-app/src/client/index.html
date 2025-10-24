@@ -1,0 +1,37 @@
+<html>
+  <head>
+    <script src="http://localhost:3005/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io('http://localhost:3005');
+
+      socket.on('connect', function () {
+        console.log('Connected to server');
+
+        socket.on('allComments', (comments) => {
+          console.log('Received all comments:', comments);
+        });
+
+        socket.on('newComment', (comment) => {
+          console.log('Received new comment:', comment);
+        });
+
+        socket.emit('addComment', {
+          bookId: '1',
+          comment: '1234',
+        });
+
+        socket.emit('getAllComments', { bookId: '1' });
+      });
+
+      socket.on('connect_error', (error) => {
+        console.error('Connection error:', error);
+      });
+
+      socket.on('disconnect', (reason) => {
+        console.log('Disconnected:', reason);
+      });
+    </script>
+  </head>
+
+  <body></body>
+</html>
